@@ -3,7 +3,10 @@ import pandas as pd
 import os
 
 # Use this to scan the directory
-def scan_directory_to_db(path="C:/Users/ADMIN/PycharmProjects", db_name='files.db', table_name='files'):
+def scan_directory_to_db(path="mock_data", db_name='images.db', table_name='files'):
+    if not os.path.exists(path):
+        raise ValueError(f"Path does not exist")
+    
     records = []
     for root, _, files in os.walk(path):
         for f in files:
@@ -11,7 +14,7 @@ def scan_directory_to_db(path="C:/Users/ADMIN/PycharmProjects", db_name='files.d
             size = os.path.getsize(filepath)
             records.append((root, f, size))
 
-    df = pd.DataFrame(records, columns = ['filepath', 'filename', 'size_bytes'])
+    df = pd.DataFrame(records, columns = ['filepath', 'filename', 'rating','explanation'])
 
     with sqlite3.connect(db_name) as connection:
         df.to_sql(table_name, connection, if_exists='replace', index=False)
