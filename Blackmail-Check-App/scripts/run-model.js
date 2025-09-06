@@ -2,13 +2,8 @@ import Groq from "groq-sdk";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-export async function main() {
-  const chatCompletion = await getGroqChatCompletion();
-  // Print the completion returned by the LLM.
-  console.log(chatCompletion.choices[0]?.message?.content || "");
-}
-
 export async function getGroqChatCompletion() {
+    const imageurl = "none";
     const output = await groq.chat.completions.create({
     messages: [
       {
@@ -16,14 +11,20 @@ export async function getGroqChatCompletion() {
         content: [
             {
                 type:"text",
-                text:""
-            }
-
+                text:"You are a cyber security expert. You need to look at images and identify all of the images that are vulnerable to blackmail attacks. So images like passwords, nudity, nsfw, confidential/personal data and more. You have to respond with the first token being the vulnerability rating {NONE,LOW,MEDIUM,HIGH} then following up with an explanation (max 400 tokens)"
+            },
+            // {
+            //   type:"",
+            //   image_url:{
+            //     url: imageurl
+            //   }
+            // },
         ]  
-
       },
     ],
-    model: "openai/gpt-oss-20b",
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    temperature: 1,
+    max_completion_tokens:500,
   });
-  return output
+  return chatCompletion.choices[0].message.content;
 }
