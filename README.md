@@ -110,7 +110,3 @@ The tool essentially acts as a comprehensive "digital audit" to help users proac
 - **Drive:** 1
 
 ---
-
-## Extra resources
-
-- Hackathon image
