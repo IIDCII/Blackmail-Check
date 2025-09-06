@@ -105,25 +105,28 @@ def return_rating(file_path, client) -> tuple[int, str]:
         # Parse the model's response to get the severity (0 or 1) and explanation
         message_content = chat_completion.choices[0].message.content
 
+        # Debug: Log the raw message content to check what the model returns
+        logging.info(f"Model response: {message_content}")
+
         # Initialize severity and description
         severity = None
         description = ""
 
-        # Check for "SFW" or "NSFW" in the response and assign severity accordingly
-        if "SFW" in message_content:
+        # Look for severity (SFW or NSFW) and clean up description
+        if "SFW (0)" in message_content:
             severity = 0
-            description = message_content.replace("SFW", "").strip()
-        elif "NSFW" in message_content:
+            description = message_content
+        elif "NSFW (1)" in message_content:
             severity = 1
-            description = message_content.replace("NSFW", "").strip()
+            description = message_content
 
-        # Clean the description to remove unwanted classification phrases
-        description = clean_description(description)
-
-        # If severity is None, it means the model's response was unexpected
+        # If no classification was found, handle error gracefully
         if severity is None:
             logging.warning(f"Invalid response format: {message_content}")
             return None, None
+
+        # Clean the description by removing unwanted phrases (e.g., 'I would classify this image as...')
+        description = clean_description(description)
 
         return severity, description
 
@@ -132,9 +135,7 @@ def return_rating(file_path, client) -> tuple[int, str]:
         return None, None
 
 def clean_description(description: str) -> str:
-    """
-    Cleans up the description by removing unnecessary text, such as classification statements.
-    """ 
+
     # Further clean the description (e.g., remove leading spaces, extra punctuation, etc.)
     description = description.strip()
     
