@@ -8,6 +8,8 @@ import os
 from groq import Groq
 
 def populate_files_to_db(directory_path, db_name='store_master_table.db'):
+    print("Locating directory...")
+    return
     print
     if not os.path.isdir(directory_path):
         print("Error: Directory not found")
@@ -78,6 +80,9 @@ def scan_directory(directory_path):
 
 def return_rating(file_path, client) -> list[str,str]:
     # check the file type (pdf,md,txt,jpg,jpeg,png,etc)
+    print("Checking rating...")
+    return
+
 
     # return rating using groq
     chat_completion = client.chat.completions.create(
@@ -108,12 +113,16 @@ if __name__ == '__main__':
     print ("Scanning for vulnerabilities...")
     scan_directory(directory_to_scan)
     print ("Scan complete.")
-    
+    val = 0
+
+
+
     # show db for demonstration
-    connection = sqlite3.connect('store_master_table.db')
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM master_table")
-    rows = cursor.fetchall()
-    for row in rows:
-        print(row)
-    connection.close()
+    if (val == 1):
+        connection = sqlite3.connect('store_master_table.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM master_table")
+        rows = cursor.fetchall()
+        for row in rows:
+            print(row)
+        connection.close()
