@@ -1,6 +1,10 @@
 import sqlite3
 import pandas as pd
 import os
+from flask import Flask, render_template
+
+# Initialize the Flask application
+app = Flask(__name__)
 
 # Use this to scan the directory
 def scan_directory_to_db(path="mock_data", db_name='images.db'):
@@ -24,11 +28,8 @@ def scan_directory_to_db(path="mock_data", db_name='images.db'):
         for root, dirs, files in os.walk(path):
             for filename in files:
                 # Get the absolute path to ensure uniqueness
-                # get the relative path along with the filename
                 path = os.path.relpath(root, path)
                 full_path = os.path.join(path, filename)
-                # Prepare a tuple for insertion with default values
-                # (file_path, severity, description)
                 files_to_insert.append((full_path, 'PENDING', None))
 
         if files_to_insert:
@@ -43,9 +44,10 @@ def scan_directory_to_db(path="mock_data", db_name='images.db'):
         print("Successfully populated file paths into")
 
     except sqlite3.Error as e:
-        print("Database error")
+        print("Database error:", e)
     except Exception as e:
-        print("An error occurred")
+        print("An error occurred:", e)
+
 
 # Use this to serve the table to the web server
 def display():
@@ -55,3 +57,14 @@ def display():
     
     # Return as HTML table
     return df.to_html()
+
+@app.route('/')
+def index():
+    # Call the function to display the table data in the web page
+    data = display()
+    return render_template('index.html', table_data=data)
+
+
+# Main method to run the application
+if __name__ == '__main__':
+    app.run(debug=True)
