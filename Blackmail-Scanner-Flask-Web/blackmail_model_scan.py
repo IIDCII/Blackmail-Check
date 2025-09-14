@@ -7,9 +7,6 @@ import logging
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Define the base directory for images
-IMAGE_DIR = '/Users/ossai/AJCODES/Blackmail-Check/Blackmail-Scanner-Flask-Web/mock_data/'
-
 def initialize_severity(db_name='images.db'):
     """
     Initialize all the records' severity to 'PENDING' in the database.
@@ -41,13 +38,12 @@ def generate_ratings(db_name='images.db'):
 
     for row in rows:
         relative_file_path = row[0]
-        full_file_path = os.path.join(IMAGE_DIR, os.path.basename(relative_file_path))
 
         # Check if the file exists
-        if os.path.exists(full_file_path):
+        if os.path.exists(relative_file_path):
             try:
                 # Run the image through the LLM and get the classification
-                severity, description = return_rating(full_file_path, client)
+                severity, description = return_rating(relative_file_path, client)
 
                 # If valid results, update the database
                 if severity is not None and description:
@@ -60,7 +56,7 @@ def generate_ratings(db_name='images.db'):
             except Exception as e:
                 logging.error(f"Error processing {relative_file_path}: {e}")
         else:
-            logging.warning(f"File '{full_file_path}' not found.")
+            logging.warning(f"File '{relative_file_path}' not found.")
 
     # Commit changes and close the connection
     connection.commit()
