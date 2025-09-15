@@ -1,0 +1,1 @@
+web: gunicorn blackmail_file_scanner_frontend:app

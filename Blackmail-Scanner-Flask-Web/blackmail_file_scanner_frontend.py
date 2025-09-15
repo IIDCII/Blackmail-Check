@@ -59,8 +59,14 @@ def display():
         if df.empty:
             return render_template('index.html', table_data="<p>No files found in database. Please add some files to the mock_data directory.</p>")
         
-        # Convert severity numbers to readable text
-        df['severity'] = df['severity'].replace({0: 'SFW', 1: 'NSFW', 'PENDING': 'PENDING'})
+        # Convert severity numbers to readable text and handle all status types
+        df['severity'] = df['severity'].replace({
+            0: 'SFW', 
+            1: 'NSFW', 
+            'PENDING': 'PENDING',
+            'FAILED': 'FAILED',
+            'UNKNOWN': 'UNKNOWN'
+        })
         
         # Return as HTML table with styling
         table_html = df.to_html(classes='table table-striped table-bordered', table_id='results-table', escape=False)
@@ -79,17 +85,58 @@ def index():
 def scan():
     # Trigger a new scan
     scan_directory_to_db()
-    generate_ratings()
-    return "Scan completed! <a href='/'>View results</a>"
+    
+    # Check if GROQ_API_KEY is available
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return """
+        <div style='padding: 20px; font-family: Arial;'>
+            <h2>⚠️ API Key Missing</h2>
+            <p>GROQ_API_KEY environment variable is not set.</p>
+            <p>The scanner has updated the file database but cannot run AI classification.</p>
+            <p><strong>To enable AI scanning:</strong></p>
+            <ol>
+                <li>Get a GROQ API key from <a href="https://console.groq.com/" target="_blank">console.groq.com</a></li>
+                <li>Set the GROQ_API_KEY environment variable</li>
+                <li>Run the scan again</li>
+            </ol>
+            <p><a href="/" class="btn">← Back to Results</a></p>
+        </div>
+        """
+    
+    try:
+        generate_ratings()
+        return """
+        <div style='padding: 20px; font-family: Arial;'>
+            <h2>✅ Scan Completed!</h2>
+            <p>Files have been processed and classified.</p>
+            <p><a href="/">← View Results</a></p>
+        </div>
+        """
+    except Exception as e:
+        return f"""
+        <div style='padding: 20px; font-family: Arial;'>
+            <h2>❌ Scan Failed</h2>
+            <p>Error: {str(e)}</p>
+            <p><a href="/">← Back to Results</a></p>
+        </div>
+        """
+
+@app.route('/health')
+def health_check():
+    return {"status": "healthy", "service": "Blackmail Check Scanner"}
 
 if __name__ == '__main__':
     # Step 1: Scan the directory and add file paths to the database
     scan_directory_to_db()
 
-    # Step 2: Process the files and classify them
-    print("Processing files with AI model...")
-    generate_ratings()
+    # Step 2: Process the files and classify them (only in development)
+    if os.environ.get('FLASK_ENV') != 'production':
+        print("Processing files with AI model...")
+        generate_ratings()
 
     # Step 3: Run the Flask app
     print("Starting Flask web server...")
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    app.run(host='0.0.0.0', port=port, debug=debug)

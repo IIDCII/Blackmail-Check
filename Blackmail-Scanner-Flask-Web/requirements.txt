@@ -1,0 +1,4 @@
+Flask==2.3.3
+pandas==2.0.3
+groq==0.4.2
+gunicorn==21.2.0
