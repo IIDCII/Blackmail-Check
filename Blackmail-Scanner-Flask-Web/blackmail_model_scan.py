@@ -62,7 +62,7 @@ def generate_ratings(db_name='images.db'):
     connection.commit()
     connection.close()
 
-def return_rating(file_path, client) -> tuple[int, str]:
+def return_rating(file_path, client) -> tuple[str, str]:
     """
     Classifies the image file at the provided path as SFW (0) or NSFW (1).
     It returns the classification (0 or 1) and an explanation (description).
@@ -74,7 +74,7 @@ def return_rating(file_path, client) -> tuple[int, str]:
 
         # Groq API request to classify the image
         chat_completion = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",  # Specify model for image classification
+            model="llama-3.2-11b-vision-preview",  # Specify model for image classification
             max_completion_tokens=200,
             temperature=1,
             top_p=1,
@@ -109,11 +109,11 @@ def return_rating(file_path, client) -> tuple[int, str]:
         description = ""
 
         # Look for severity (SFW or NSFW) and clean up description
-        if "SFW (0)" in message_content:
-            severity = 0
+        if "SFW" in message_content.upper() or "0" in message_content:
+            severity = "SFW"
             description = message_content
-        elif "NSFW (1)" in message_content:
-            severity = 1
+        elif "NSFW" in message_content.upper() or "1" in message_content:
+            severity = "NSFW"
             description = message_content
 
         # If no classification was found, handle error gracefully
