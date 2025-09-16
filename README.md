@@ -7,6 +7,17 @@
 
 **Model users:** Civil servants, politicians, celebrities, military personnel
 
+## 🚀 Live Demo
+
+**[View Live Application](https://blackmail-check-scanner.railway.app)**
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/QNDzjO?referralCode=alphasec)
+
+### Quick Start
+1. Click the Railway deploy button above
+2. Set your `GROQ_API_KEY` environment variable
+3. Deploy and start scanning your files!
+
 ---
 
 ## Team
@@ -108,5 +119,72 @@ The tool essentially acts as a comprehensive "digital audit" to help users proac
 - **Gmail:** 12
 - **Photos:** 3
 - **Drive:** 1
+
+---
+
+## 💻 Development & Deployment
+
+### Local Development
+```bash
+cd Blackmail-Scanner-Flask-Web
+pip install -r requirements.txt
+export GROQ_API_KEY="your_api_key_here"
+python blackmail_file_scanner_frontend.py
+```
+
+### One-Click Railway Deployment
+1. **Fork this repository**
+2. **Click the Railway button above**
+3. **Connect your GitHub account**
+4. **Set environment variables:**
+   - `GROQ_API_KEY`: Get from [console.groq.com](https://console.groq.com)
+   - `FLASK_ENV`: Set to `production`
+5. **Deploy!** 🎉
+
+### Manual Railway Deployment
+1. Install [Railway CLI](https://docs.railway.app/develop/cli)
+2. `railway login`
+3. `cd Blackmail-Scanner-Flask-Web`
+4. `railway init`
+5. `railway up`
+
+### Environment Variables
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GROQ_API_KEY` | API key for AI vision model | Yes (for scanning) |
+| `FLASK_ENV` | Set to `production` | Recommended |
+
+### Tech Stack
+- **Backend:** Flask, SQLite, Python
+- **Frontend:** Bootstrap 5, JavaScript
+- **AI:** Groq Vision API (Llama 4 Scout)
+- **Deployment:** Railway, Gunicorn
+- **Database:** SQLite (file-based)
+
+---
+
+## 🔧 Features
+
+### Core Scanner
+- **File Detection:** Automatic discovery of image files
+- **AI Classification:** SFW/NSFW detection using vision models
+- **Risk Assessment:** Categorized threat levels
+- **Database Tracking:** SQLite-based file management
+- **Error Handling:** Robust failure recovery
+
+### Web Interface
+- **Dashboard:** Real-time statistics and file overview
+- **Responsive Design:** Mobile-friendly Bootstrap UI
+- **Status Tracking:** Visual indicators for scan progress
+- **Health Monitoring:** Built-in health check endpoints
+
+---
+
+## 🛡️ Security & Privacy
+
+- **No Data Retention:** Files processed locally, not stored
+- **API Security:** Secure key management
+- **Privacy-First:** Designed for sensitive data handling
+- **Defensive Purpose:** Built for cybersecurity professionals
 
 ---

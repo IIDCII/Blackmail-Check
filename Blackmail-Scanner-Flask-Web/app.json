@@ -1,0 +1,21 @@
+{
+  "name": "Blackmail Check Scanner",
+  "description": "Privacy-first digital vulnerability assessment tool",
+  "repository": "https://github.com/IIDCII/Blackmail-Check",
+  "keywords": ["cybersecurity", "privacy", "flask", "ai-scanning"],
+  "env": {
+    "GROQ_API_KEY": {
+      "description": "API key for Groq vision model (get from console.groq.com)",
+      "required": false
+    },
+    "FLASK_ENV": {
+      "description": "Flask environment",
+      "value": "production"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  }
+}
